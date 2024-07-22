@@ -10,6 +10,7 @@ import { getTemporaryDirectory, printDebugLogs } from "./actions-util";
 import { getGitHubVersion } from "./api-client";
 import { Config, getConfig } from "./config-utils";
 import * as debugArtifacts from "./debug-artifacts";
+import { uploadDependencyCaches } from "./dependency-caching";
 import { Features } from "./feature-flags";
 import * as initActionPostHelper from "./init-action-post-helper";
 import { getActionsLogger } from "./logging";
@@ -21,6 +22,7 @@ import {
   getActionsStatus,
   ActionName,
   getJobStatusDisplayName,
+  JobStatus,
 } from "./status-report";
 import {
   checkDiskUsage,
@@ -108,6 +110,14 @@ async function runWrapper() {
       job_status: initActionPostHelper.getFinalJobStatus(),
     };
     await sendStatusReport(statusReport);
+  }
+
+  // Store dependency cache(s) if the job was successful and dependency caching is enabled.
+  if (
+    jobStatus === JobStatus.SuccessStatus &&
+    config.dependencyCachingEnabled
+  ) {
+    await uploadDependencyCaches(config, logger);
   }
 }
 
