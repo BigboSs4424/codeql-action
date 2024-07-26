@@ -12,6 +12,7 @@ import {
   getOptionalInput,
   getRequiredInput,
   getTemporaryDirectory,
+  isDefaultSetup,
 } from "./actions-util";
 import { getGitHubVersion } from "./api-client";
 import { CodeQL } from "./codeql";
@@ -708,13 +709,6 @@ async function recordZstdAvailability(
       },
     ),
   );
-}
-
-/** Determines whether we are running in default setup. */
-function isDefaultSetup(): boolean {
-  // This is set to something in default setup runs.
-  // TODO: replace with something better, if there's something.
-  return process.env["CODE_SCANNING_WORKFLOW_FILE"] !== undefined;
 }
 
 /** Determines whether dependency caching is enabled. */
